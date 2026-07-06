@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { fetchApi } from '../api';
 
 type Activity = {
   _id?: string;
@@ -15,9 +14,15 @@ export default function Activities() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchApi<Activity[]>('activities')
+    const codespaceName = import.meta.env.VITE_CODESPACE_NAME;
+    const apiBase = codespaceName && codespaceName !== ''
+      ? `https://${codespaceName}-8000.app.github.dev/api`
+      : '/api';
+
+    fetch(`${apiBase}/activities/`)
+      .then((response) => response.json())
       .then((data) => {
-        setActivities(data);
+        setActivities(data.activities ?? data);
         setLoading(false);
       })
       .catch((err) => {

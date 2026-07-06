@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { fetchApi } from '../api';
 
 type Team = {
   _id?: string;
@@ -13,9 +12,15 @@ export default function Teams() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchApi<Team[]>('teams')
+    const codespaceName = import.meta.env.VITE_CODESPACE_NAME;
+    const apiBase = codespaceName && codespaceName !== ''
+      ? `https://${codespaceName}-8000.app.github.dev/api`
+      : '/api';
+
+    fetch(`${apiBase}/teams/`)
+      .then((response) => response.json())
       .then((data) => {
-        setTeams(data);
+        setTeams(data.teams ?? data);
         setLoading(false);
       })
       .catch((err) => {

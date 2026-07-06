@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { fetchApi } from '../api';
 
 type LeaderboardEntry = {
   _id?: string;
@@ -14,9 +13,15 @@ export default function Leaderboard() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchApi<LeaderboardEntry[]>('leaderboard')
+    const codespaceName = import.meta.env.VITE_CODESPACE_NAME;
+    const apiBase = codespaceName && codespaceName !== ''
+      ? `https://${codespaceName}-8000.app.github.dev/api`
+      : '/api';
+
+    fetch(`${apiBase}/leaderboard/`)
+      .then((response) => response.json())
       .then((data) => {
-        setLeaderboard(data);
+        setLeaderboard(data.leaderboard ?? data);
         setLoading(false);
       })
       .catch((err) => {

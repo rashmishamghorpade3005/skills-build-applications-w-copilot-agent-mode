@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { fetchApi } from '../api';
 
 type Workout = {
   _id?: string;
@@ -15,9 +14,15 @@ export default function Workouts() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchApi<Workout[]>('workouts')
+    const codespaceName = import.meta.env.VITE_CODESPACE_NAME;
+    const apiBase = codespaceName && codespaceName !== ''
+      ? `https://${codespaceName}-8000.app.github.dev/api`
+      : '/api';
+
+    fetch(`${apiBase}/workouts/`)
+      .then((response) => response.json())
       .then((data) => {
-        setWorkouts(data);
+        setWorkouts(data.workouts ?? data);
         setLoading(false);
       })
       .catch((err) => {

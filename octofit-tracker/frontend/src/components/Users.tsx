@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { fetchApi } from '../api';
 
 type User = {
   _id?: string;
@@ -14,9 +13,15 @@ export default function Users() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchApi<User[]>('users')
+    const codespaceName = import.meta.env.VITE_CODESPACE_NAME;
+    const apiBase = codespaceName && codespaceName !== ''
+      ? `https://${codespaceName}-8000.app.github.dev/api`
+      : '/api';
+
+    fetch(`${apiBase}/users/`)
+      .then((response) => response.json())
       .then((data) => {
-        setUsers(data);
+        setUsers(data.users ?? data);
         setLoading(false);
       })
       .catch((err) => {
