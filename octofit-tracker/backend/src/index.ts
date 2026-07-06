@@ -1,6 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import db from './config/database.js';
+import './config/database.js';
 import usersRouter from './routes/users.js';
 import teamsRouter from './routes/teams.js';
 import activitiesRouter from './routes/activities.js';
@@ -12,9 +12,9 @@ dotenv.config();
 const app = express();
 const port = Number(process.env.PORT || 8000);
 const codespaceName = process.env.CODESPACE_NAME;
-const apiUrl = process.env.API_URL || (codespaceName
-  ? `https://${codespaceName}-8000.githubpreview.dev`
-  : `http://localhost:${port}`);
+const apiUrl = codespaceName
+  ? `https://${codespaceName}-8000.app.github.dev`
+  : `http://localhost:${port}`;
 
 app.use(express.json());
 app.use('/api/users', usersRouter);
